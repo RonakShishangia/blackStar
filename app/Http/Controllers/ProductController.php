@@ -52,14 +52,18 @@ class ProductController extends Controller
     {
         $request->validate([
             'name' => 'required|unique:products',
+        ], $messages = [
+            'name.required' => 'It not should be blank',
+            'name.unique' => 'It not should be unique',
         ]);
         try{
-            $products = new Product;
-            $products->name = $request->name;
+            $products = new Product($request->all());
             $products->save();
-            
+            \Session::flash("notification", "Record successfully added..");
+            return redirect()->route('client.product.index');
         }catch(\Exception $e){
-
+            \Session::flash("notification", "Something went wrong..");
+            return redirect()->route('client.product.index');
         }
     }
 
